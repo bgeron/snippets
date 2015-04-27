@@ -3,22 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Bram's snippets's documentation!
-===========================================
+Bram's snippets's
+=================
 
-Contents:
+.. image:: https://readthedocs.org/projects/bgeron-snippets/badge/?version=latest
+	:target: https://readthedocs.org/projects/bgeron-snippets/?badge=latest
+	:alt: Documentation Status
 
 .. toctree::
    :maxdepth: 2
 
    chrome-snippets
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
