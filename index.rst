@@ -3,8 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Bram's snippets's
-=================
+Bram's snippets
+===============
+
+http://snippets.bram.xyz/
 
 .. image:: https://readthedocs.org/projects/bgeron-snippets/badge/?version=latest
 	:target: https://readthedocs.org/projects/bgeron-snippets/?badge=latest
