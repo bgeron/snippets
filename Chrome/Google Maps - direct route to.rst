@@ -13,8 +13,12 @@ This brings up the route from my university:
 
 To get this, open `chrome://settings/searchEngines <chrome://settings/searchEngines>`_ (you'll have to copy-paste that link), and fill in a new entry:
 
-	:New engine: Route to
+	:New engine: *Route to*
 	:Keyword: ``to``
 	:URL: ``https://www.google.co.uk/maps/search/from:+university+of+birmingham+to:+%s``
 
 To use your own starting place, replace ``university+of+birmingham`` with something of your choice without any special characters; replace spaces by plusses.
+
+
+.. image:: http://i.imgur.com/rc3YLWl.gif
+	:width: 400px
