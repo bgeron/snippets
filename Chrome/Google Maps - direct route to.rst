@@ -20,5 +20,5 @@ To get this, open `chrome://settings/searchEngines <chrome://settings/searchEngi
 To use your own starting place, replace ``university+of+birmingham`` with something of your choice without any special characters; replace spaces by plusses.
 
 
-.. image:: http://i.imgur.com/rc3YLWl.gif
+.. image:: ../resources/rc3YLWl.gif
 	:width: 400px
