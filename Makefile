@@ -10,6 +10,8 @@ SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
 
+GH_PAGES_TARGET	= html
+
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
 $(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
@@ -24,7 +26,22 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
-default: singlehtml
+default: html
+
+pages: html
+
+	test -d _gh-pages
+	rm -r _gh-pages/*
+	cd _gh-pages && git checkout CNAME .nojekyll
+	cp -rvt _gh-pages/ $(BUILDDIR)/$(GH_PAGES_TARGET)/*
+	cd _gh-pages && git add -A && git commit -m 'new version'
+	git fetch _gh-pages +gh-pages:gh-pages
+
+
+pagespush:
+
+	git push origin gh-pages
+
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
