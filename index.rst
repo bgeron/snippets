@@ -7,8 +7,15 @@ http://snippets.bram.xyz/
 .. rubric:: Chrome snippets
 
 .. toctree::
-   :maxdepth: 2
-   :glob:
+    :maxdepth: 2
+    :glob:
 
-   Chrome/*
+    Chrome/*
 
+.. rubric:: Birmingham computer science specific snippets
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+
+    SoCS/*
