@@ -46,7 +46,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bram\'s snippets'
-copyright = u'2015, Bram Geron'
+copyright = u'2015, Bram Geron. Feel free to reuse under CC-BY 4.0'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
