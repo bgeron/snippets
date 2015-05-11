@@ -34,7 +34,7 @@ pages: html
 	rm -r _gh-pages/*
 	cd _gh-pages && git checkout CNAME .nojekyll
 	cp -rvt _gh-pages/ $(BUILDDIR)/$(GH_PAGES_TARGET)/*
-	cd _gh-pages && git add -A && git commit -m 'new version'
+	cd _gh-pages && git add -A && ( git diff --cached | diffstat ) && git commit -m 'new version'
 	git fetch _gh-pages +gh-pages:gh-pages
 
 
