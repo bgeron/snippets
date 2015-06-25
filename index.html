@@ -30,19 +30,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
 
   </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="Chrome/Google Maps - direct route to.html" title="Google Maps: fast routes from a fixed point"
-             accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Bram&#39;s snippets</a> &raquo;</li> 
-      </ul>
-    </div>  
+  <body role="document">  
 
     <div class="document">
       <div class="documentwrapper">
@@ -64,12 +52,19 @@
 <li class="toctree-l1"><a class="reference internal" href="SoCS/printing.html">How I set up my school printers</a></li>
 </ul>
 </div>
-<p class="rubric">Other&#8217;s scripts and programs I like</p>
+<p class="rubric">Others&#8217; scripts and programs I like and fanboy about</p>
 <ul>
 <li><p class="first"><a class="reference external" href="http://beyondgrep.com/">Ack</a>: like <em>grep</em> but with good defaults for programmers. Ignores version control and build directories; trivial to customise.</p>
 <blockquote>
 <div><p><em>If you use Ubuntu,</em> <code class="docutils literal"><span class="pre">apt</span> <span class="pre">install</span> <span class="pre">ack-grep</span></code> <em>and define an</em> <code class="docutils literal"><span class="pre">alias</span> <span class="pre">ack=ack-grep</span></code> <em>in your shell profile.</em></p>
 </div></blockquote>
+</li>
+<li><p class="first"><a class="reference external" href="http://fishshell.com/">Fish</a>, the friendly interactive shell. Has better syntax, great defaults (syntax highlighting!), and better tab-completion (substrings, not just prefixes of filenames). Defining and saving an alias is as simple as this:</p>
+<div class="highlight-python"><div class="highlight"><pre>alias s sublime_text
+funcsave s
+</pre></div>
+</div>
+<p>This persists the newly created function <code class="docutils literal"><span class="pre">s</span></code> to <code class="docutils literal"><span class="pre">~/.config/fish/functions/s.fish</span></code>, and it will automatically be loaded in all currently-running and future shells! No more manual fiddling around with <code class="docutils literal"><span class="pre">~/.profile</span></code>.</p>
 </li>
 </ul>
 <div class="section" id="contact">
@@ -96,10 +91,14 @@
 </ul>
 </li>
 </ul>
-
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Chrome/Google Maps - direct route to.html"
-                        title="next chapter">Google Maps: fast routes from a fixed point</a></p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="Chrome/Google Maps - direct route to.html" title="next chapter">Google Maps: fast routes from a fixed point</a></li>
+  </ul></li>
+</ul>
+</div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -129,16 +128,16 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.5</a>
       
       |
       <a href="_sources/index.txt"
-          rel="nofollow">Page source</a></li>
+          rel="nofollow">Page source</a>
     </div>
 
     
     <a href="https://github.com/bgeron/snippets" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     
 
