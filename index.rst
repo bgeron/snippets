@@ -12,6 +12,14 @@ http://snippets.bram.xyz/
 
     Chrome/*
 
+.. rubric:: Shell snippets
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+    
+    shell/*
+
 .. rubric:: Birmingham computer science specific snippets
 
 .. toctree::
@@ -19,6 +27,8 @@ http://snippets.bram.xyz/
     :glob:
 
     SoCS/*
+
+
 
 .. rubric:: Others' scripts and programs I like and fanboy about
 
