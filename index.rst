@@ -28,6 +28,13 @@ http://snippets.bram.xyz/
 
     SoCS/*
 
+.. rubric:: Other snippets
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+
+    other/*
 
 
 .. rubric:: Others' scripts and programs I like and fanboy about
