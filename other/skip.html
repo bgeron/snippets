@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sphinx extension: skip.py &mdash; Bram&#39;s snippets</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '-',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Bram&#39;s snippets" href="../index.html" />
+    <link rel="prev" title="How I set up my school printers" href="../SoCS/printing.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sphinx-extension-skip-py">
+<h1>Sphinx extension: skip.py<a class="headerlink" href="#sphinx-extension-skip-py" title="Permalink to this headline">¶</a></h1>
+<p>This extension gives you a <code class="docutils literal"><span class="pre">skip</span></code> directive that adds some vertical space.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">Skip directive, by Bram Geron.</span>
+
+<span class="sd">Adds a bit of vertical space.</span>
+
+<span class="sd">Usage:</span>
+
+<span class="sd">    .. skip:: big</span>
+
+<span class="sd">This adds a \bigskip in the LaTeX, and a vertical space in the HTML. By HTML</span>
+<span class="sd">standards, the space is not very big.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">docutils</span> <span class="kn">import</span> <span class="n">nodes</span>
+<span class="kn">from</span> <span class="nn">docutils.parsers.rst</span> <span class="kn">import</span> <span class="n">Directive</span>
+<span class="kn">import</span> <span class="nn">docutils.parsers.rst.directives</span> <span class="kn">as</span> <span class="nn">directives</span>
+<span class="kn">from</span> <span class="nn">sphinx.errors</span> <span class="kn">import</span> <span class="n">SphinxError</span>
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">skip</span><span class="p">,</span>
+                 <span class="n">html</span><span class="o">=</span><span class="p">(</span><span class="n">visit_skip_html</span><span class="p">,</span> <span class="n">depart_skip_html</span><span class="p">),</span>
+                 <span class="n">latex</span><span class="o">=</span><span class="p">(</span><span class="n">visit_skip_tex</span><span class="p">,</span> <span class="n">depart_skip_tex</span><span class="p">))</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">add_directive</span><span class="p">(</span><span class="s">&#39;skip&#39;</span><span class="p">,</span> <span class="n">SkipDirective</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">&#39;version&#39;</span><span class="p">:</span> <span class="s">&quot;0.1&quot;</span><span class="p">,</span>
+        <span class="s">&#39;parallel_read_safe&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="s">&#39;parallel_write_safe&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">skip</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">General</span><span class="p">,</span> <span class="n">nodes</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">SkipError</span><span class="p">(</span><span class="n">SphinxError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">SkipDirective</span><span class="p">(</span><span class="n">Directive</span><span class="p">):</span>
+    
+    <span class="n">has_content</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">option_spec</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;missing skip size&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;skip size decl not recognised: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;para&#39;</span><span class="p">,</span> <span class="s">&#39;big&#39;</span><span class="p">,</span> <span class="s">&#39;xxlarge&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">skip</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;skip size not recognised: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+
+
+
+<span class="k">def</span> <span class="nf">visit_skip_tex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;para&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;big&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n\\</span><span class="s">bigskip</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;xxlarge&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n\\</span><span class="s">vfill</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SkipError</span><span class="p">(</span><span class="s">&quot;cannot render skip size </span><span class="si">%r</span><span class="s"> to latex&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">],))</span>
+
+<span class="k">def</span> <span class="nf">depart_skip_tex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">visit_skip_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;para&#39;</span><span class="p">]:</span>
+        <span class="k">pass</span> <span class="c"># HTML already breaks enough paragraphs</span>
+    <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;big&#39;</span><span class="p">,</span> <span class="s">&#39;xxlarge&#39;</span><span class="p">]:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">starttag</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s">&#39;div&#39;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s">&#39;class&#39;</span><span class="p">:</span> <span class="s">&#39;skip-</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">],)}))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;/div&gt;&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SkipError</span><span class="p">(</span><span class="s">&quot;cannot render skip size </span><span class="si">%s</span><span class="s"> to HTML&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">],))</span>
+
+
+<span class="k">def</span> <span class="nf">depart_skip_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../SoCS/printing.html" title="previous chapter">How I set up my school printers</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/other/skip.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Bram Geron. Feel free to reuse under CC-BY 4.0.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="../_sources/other/skip.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/bgeron/snippets" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
