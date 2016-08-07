@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Improving FizzBuzz in Rust &mdash; Bram&#39;s snippets</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '-',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Bram&#39;s snippets" href="../index.html" />
+    <link rel="next" title="LaTeX snippet: common-unicode.sty" href="common-unicode.html" />
+    <link rel="prev" title="How I set up my school printers" href="../SoCS/printing.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="improving-fizzbuzz-in-rust">
+<h1>Improving FizzBuzz in Rust<a class="headerlink" href="#improving-fizzbuzz-in-rust" title="Permalink to this headline">¶</a></h1>
+<p>Chris Morgan has a <a class="reference external" href="https://chrismorgan.info/blog/rust-fizzbuzz.html">really good write-up</a> of the potential problems someone might encounter when you try to implement FizzBuzz in Rust. He gives the obvious solution, distinguishing 4 cases and printing <em>Fizz</em>, <em>Buzz</em>, <em>FizzBuzz</em>, or a number in each case. Problems appear when he tries to make a variable that can hold either the string or the number:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span class="c1">// This doesn&#39;t work because result</span>
+<span class="c1">// can only hold one type of value.</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mf">1.</span><span class="p">.</span><span class="mi">101</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;FizzBuzz&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;Buzz&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;Fizz&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">i</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Unfortunately, the normal string type <code class="code docutils literal"><span class="pre">&amp;str</span></code> does not work for this. He proceeds to give two solutions that do work:</p>
+<ol class="arabic simple">
+<li><code class="code docutils literal"><span class="pre">result</span></code> can be a <code class="code docutils literal"><span class="pre">String</span></code>, which would be allocated in the heap, written, and deallocated 101 times: 53 times a number is converted to string and 48 times a constant string is copied.</li>
+<li><code class="code docutils literal"><span class="pre">result</span></code> can be a <code class="code docutils literal"><span class="pre">Cow&lt;str&gt;</span></code>, which is either a pointer to a preexisting string or a heap-allocated (and owned) <code class="code docutils literal"><span class="pre">String</span></code>. This is more efficient because we save 48 times copying a constant string.</li>
+<li><code class="code docutils literal"><span class="pre">result</span></code> can be an enum describing either the three constant cases, or a <code class="code docutils literal"><span class="pre">i32</span></code> to be printed in decimal. This is more efficient because the integers are written directly into the output stream buffer, rather than being put into a <code class="code docutils literal"><span class="pre">String</span></code> first. However, the implementation is long-winded: 24 extra lines.</li>
+</ol>
+<p>In Golang, I think a different solution would be idiomatic: to return an interface object, of type <code class="code docutils literal"><span class="pre">interface{}</span></code>. It&#8217;s a set of two pointers: one pointer to the data to be printed and one pointer that tells what kind of data it is. The second pointer can be used to print the object.</p>
+<p>We can do a similar thing in Rust, and it&#8217;s actually pretty clean:</p>
+<div class="highlight-rust"><div class="highlight"><pre><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mf">1.</span><span class="p">.</span><span class="mi">101</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">result</span><span class="o">:</span><span class="w"> </span><span class="n">Box</span><span class="o">&lt;</span><span class="n">Display</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Box</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;FizzBuzz&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Box</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;Buzz&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Box</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;Fizz&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Box</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Indeed, this code is equally long as the version with <code class="code docutils literal"><span class="pre">print</span></code>s! (Though it took a while to get working.)</p>
+<p>In Rust, a <code class="code docutils literal"><span class="pre">Box&lt;Display&gt;</span></code> is some heap-allocated storage of unknown size. It starts with a pointer describing what kind of thing it is, and how to <code class="code docutils literal"><span class="pre">Display</span></code> it, and after that is the data in some format. For instance, on 64-bit architectures the first three boxes look something like this:</p>
+<div class="highlight-none"><div class="highlight"><pre>0         8        16        24
+| kindptr |  start  | length  |
+</pre></div>
+</div>
+<p><code class="code docutils literal"><span class="pre">start</span></code> points to the start of the byte array, and <code class="code docutils literal"><span class="pre">length</span></code> tells you the length of the substring we&#8217;re interested in.</p>
+<p><code class="code docutils literal"><span class="pre">Box::new(i)</span></code> would look something like this:</p>
+<div class="highlight-none"><div class="highlight"><pre>0         8   12
+| kindptr | i  |
+</pre></div>
+</div>
+<p>Theoretically, this may even be faster than Chris&#8217;s variant as the digits are written into a buffer once not twice. But most importantly the code looks clean!</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../SoCS/printing.html" title="previous chapter">How I set up my school printers</a></li>
+      <li>Next: <a href="common-unicode.html" title="next chapter">LaTeX snippet: common-unicode.sty</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/other/2016-08-rust-fizzbuzz.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Bram Geron. Feel free to reuse under CC-BY 4.0.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/other/2016-08-rust-fizzbuzz.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/bgeron/snippets" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

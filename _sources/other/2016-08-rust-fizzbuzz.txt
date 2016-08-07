@@ -1,0 +1,70 @@
+
+Improving FizzBuzz in Rust
+==========================
+
+.. default-role:: code
+
+.. highlight:: rust
+
+Chris Morgan has a `really good write-up <https://chrismorgan.info/blog/rust-fizzbuzz.html>`_ of the potential problems someone might encounter when you try to implement FizzBuzz in Rust. He gives the obvious solution, distinguishing 4 cases and printing *Fizz*, *Buzz*, *FizzBuzz*, or a number in each case. Problems appear when he tries to make a variable that can hold either the string or the number::
+
+    // This doesn't work because result
+    // can only hold one type of value.
+
+    for i in 1..101 {
+        let result = if i % 15 == 0 {
+            "FizzBuzz"
+        } else if i % 5 == 0 {
+            "Buzz"
+        } else if i % 3 == 0 {
+            "Fizz"
+        } else {
+            i
+        };
+
+        println!("{}", result);
+    }
+
+Unfortunately, the normal string type `&str` does not work for this. He proceeds to give two solutions that do work:
+
+#.  `result` can be a `String`, which would be allocated in the heap, written, and deallocated 101 times: 53 times a number is converted to string and 48 times a constant string is copied.
+#.  `result` can be a `Cow<str>`, which is either a pointer to a preexisting string or a heap-allocated (and owned) `String`. This is more efficient because we save 48 times copying a constant string.
+#.  `result` can be an enum describing either the three constant cases, or a `i32` to be printed in decimal. This is more efficient because the integers are written directly into the output stream buffer, rather than being put into a `String` first. However, the implementation is long-winded: 24 extra lines.
+
+In Golang, I think a different solution would be idiomatic: to return an interface object, of type `interface{}`. It's a set of two pointers: one pointer to the data to be printed and one pointer that tells what kind of data it is. The second pointer can be used to print the object.
+
+We can do a similar thing in Rust, and it's actually pretty clean::
+
+    for i in 1..101 {
+        let result: Box<Display> = if i % 15 == 0 {
+            Box::new("FizzBuzz")
+        } else if i % 5 == 0 {
+            Box::new("Buzz")
+        } else if i % 3 == 0 {
+            Box::new("Fizz")
+        } else {
+            Box::new(i)
+        };
+
+        println!("{}", result);
+    }
+
+Indeed, this code is equally long as the version with `print`\ s! (Though it took a while to get working.)
+
+In Rust, a `Box<Display>` is some heap-allocated storage of unknown size. It starts with a pointer describing what kind of thing it is, and how to `Display` it, and after that is the data in some format. For instance, on 64-bit architectures the first three boxes look something like this:
+
+.. code-block:: none
+
+    0         8        16        24
+    | kindptr |  start  | length  |
+
+`start` points to the start of the byte array, and `length` tells you the length of the substring we're interested in.
+
+`Box::new(i)` would look something like this:
+
+.. code-block:: none
+
+    0         8   12
+    | kindptr | i  |
+
+Theoretically, this may even be faster than Chris's variant as the digits are written into a buffer once not twice. But most importantly the code looks clean!
