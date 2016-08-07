@@ -6,6 +6,8 @@ Improving FizzBuzz in Rust
 
 .. highlight:: rust
 
+(Read the blog version `here <https://bram.xyz/blog/2016/08/fizzbuzz-rust/>`_ and comment.)
+
 Chris Morgan has a `really good write-up <https://chrismorgan.info/blog/rust-fizzbuzz.html>`_ of the potential problems someone might encounter when you try to implement FizzBuzz in Rust. He gives the obvious solution, distinguishing 4 cases and printing *Fizz*, *Buzz*, *FizzBuzz*, or a number in each case. Problems appear when he tries to make a variable that can hold either the string or the number::
 
     // This doesn't work because result

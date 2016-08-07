@@ -40,6 +40,7 @@
             
   <div class="section" id="improving-fizzbuzz-in-rust">
 <h1>Improving FizzBuzz in Rust<a class="headerlink" href="#improving-fizzbuzz-in-rust" title="Permalink to this headline">¶</a></h1>
+<p>(Read the blog version <a class="reference external" href="https://bram.xyz/blog/2016/08/fizzbuzz-rust/">here</a> and comment.)</p>
 <p>Chris Morgan has a <a class="reference external" href="https://chrismorgan.info/blog/rust-fizzbuzz.html">really good write-up</a> of the potential problems someone might encounter when you try to implement FizzBuzz in Rust. He gives the obvious solution, distinguishing 4 cases and printing <em>Fizz</em>, <em>Buzz</em>, <em>FizzBuzz</em>, or a number in each case. Problems appear when he tries to make a variable that can hold either the string or the number:</p>
 <div class="highlight-rust"><div class="highlight"><pre><span class="c1">// This doesn&#39;t work because result</span>
 <span class="c1">// can only hold one type of value.</span>
